@@ -396,8 +396,6 @@ public struct Vector2F : IEquatable<Vector2F>
     /// <summary>
     /// Normalizes this vector to unit length.
     /// If the vector has near-zero length (or contains NaN/Infinity), returns <see cref="Zero"/>.
-    /// Note: This implementation divides by the squared length instead of the actual length (likely a bug).
-    /// Should be: new Vector2F(X / length, Y / length) where length = sqrt(LengthSquared).
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Vector2F Normalize()
