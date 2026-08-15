@@ -92,11 +92,18 @@ public struct Vector2F : IEquatable<Vector2F>
     /// Gets the squared Euclidean length of the vector (avoids square root for performance).
     /// </summary>
     public float LengthSquared => X * X + Y * Y;
-    
+
     /// <summary>
     /// Gets the aspect ratio (X / Y). Useful for screen-space calculations.
     /// </summary>
-    public float Aspect => Y == 0 ? float.PositiveInfinity : X / Y;
+    public float Aspect
+    {
+        get
+        {
+            if (Y == 0f) return X > 0 ? float.PositiveInfinity : float.NegativeInfinity;
+            return X / Y;
+        }
+    }
     
     /// <summary>
     /// Determines whether two vectors are equal by comparing their components exactly.
@@ -170,9 +177,9 @@ public struct Vector2F : IEquatable<Vector2F>
     /// </remarks>
     /// <returns>The angle in radians corresponding to the direction of this vector.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public float ToAngle() 
+    public float ToAngle()
         => (float)Math.Atan2(Y, X);
-    
+
     /// <summary>
     /// Creates a unit vector from an angle (in radians).
     /// This is a static factory method that returns a new vector pointing in the direction specified by the angle.
@@ -195,9 +202,9 @@ public struct Vector2F : IEquatable<Vector2F>
     /// </remarks>
     /// <returns>A unit <see cref="Vector2F"/> pointing in the direction of the given angle.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector2F FromAngle(float angle) 
+    public static Vector2F FromAngle(float angle)
         => new Vector2F((float)Math.Cos(angle), (float)Math.Sin(angle));
-    
+
     /// <summary>
     /// Returns a new vector with the absolute values of each component.
     /// </summary>
@@ -233,7 +240,7 @@ public struct Vector2F : IEquatable<Vector2F>
     /// </remarks>
     /// <returns>A new <see cref="Vector2F"/> where each component is the smaller of the two input components.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Vector2F Min(in Vector2F other) =>  new Vector2F(Math.Min(X, other.X), Math.Min(Y, other.Y));
+    public Vector2F Min(in Vector2F other) => new Vector2F(Math.Min(X, other.X), Math.Min(Y, other.Y));
     
     /// <summary>
     /// Clamps each component of the given vector so that it is no less than the specified minimum value.
@@ -252,10 +259,10 @@ public struct Vector2F : IEquatable<Vector2F>
     /// </remarks>
     /// <returns>A new <see cref="Vector2F"/> with each component clamped to be at least <paramref name="min"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public  static Vector2F ClampMinComponents(in Vector2F vector, float min) 
+    public static Vector2F ClampMinComponents(in Vector2F vector, float min)
         => new Vector2F(
-            Math.Min(vector.X, min),
-            Math.Min(vector.Y, min)
+            Math.Max(vector.X, min),
+            Math.Max(vector.Y, min)
         );
     
     /// <summary>
@@ -271,11 +278,11 @@ public struct Vector2F : IEquatable<Vector2F>
     /// </remarks>
     /// <returns>A new <see cref="Vector2F"/> with each component clamped to be at least the corresponding component of <paramref name="min"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Vector2F ClampMinComponents(in Vector2F min) 
+    public Vector2F ClampMinComponents(in Vector2F min)
         => new Vector2F(
-            Math.Min(X, min.X),
-            Math.Min(Y, min.Y)
-        ); 
+            Math.Max(X, min.X),
+            Math.Max(Y, min.Y)
+        );
     
     /// <summary>
     /// Returns a new vector where each component is the maximum of this vector's component and the corresponding component of the other vector.
@@ -292,7 +299,6 @@ public struct Vector2F : IEquatable<Vector2F>
     public Vector2F Max(in Vector2F other) => new Vector2F(Math.Max(X, other.X), Math.Max(Y, other.Y));
     
     /// <summary>
-    /// Clamps each component of this vector to be no less than the specified maximum value.
     /// Clamps each component of this vector so that it is no greater than the specified maximum value.
     /// Effectively ensures every component ≤ <paramref name="max"/>.
     /// </summary>
@@ -310,8 +316,8 @@ public struct Vector2F : IEquatable<Vector2F>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Vector2F ClampMaxComponents(float max)
         => new Vector2F(
-            Math.Max(X, max),
-            Math.Max(Y, max)
+            Math.Min(X, max),
+            Math.Min(Y, max)
         );
     
     /// <summary>
@@ -327,10 +333,10 @@ public struct Vector2F : IEquatable<Vector2F>
     /// </remarks>
     /// <returns>A new <see cref="Vector2F"/> with each component clamped to be at most <paramref name="max"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector2F ClampMaxComponents(in Vector2F vector, float max) 
+    public static Vector2F ClampMaxComponents(in Vector2F vector, float max)
         => new Vector2F(
-            Math.Max(vector.X, max),
-            Math.Max(vector.Y, max)
+            Math.Min(vector.X, max),
+            Math.Min(vector.Y, max)
         );
     
     /// <summary>
@@ -649,8 +655,11 @@ public struct Vector2F : IEquatable<Vector2F>
     /// </remarks>
     /// <returns>A new <see cref="Vector2F"/> representing the reflected direction.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool IsEqualApproximate(Vector2F other)
-        => Utils.IsEqualApproximate(X, other.X) && Utils.IsEqualApproximate(Y, other.Y);
+    public Vector2F Reflect(in Vector2F other)
+    {
+        Debug.Assert(IsNormalized(other), "Normal vector must be normalized");
+        return this - 2 * Dot(other) * other;
+    }
 
     /// <summary>
     /// Computes the bounce direction by negating the reflection of this vector about the given normal.
@@ -668,8 +677,8 @@ public struct Vector2F : IEquatable<Vector2F>
     /// </remarks>
     /// <returns>A new <see cref="Vector2F"/> representing the bounced (inverted reflection) direction.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool IsSame(Vector2F other)
-        => Utils.IsSame(X, other.X) && Utils.IsSame(Y, other.Y);
+    public Vector2F Bounce(in Vector2F other)
+        => -Reflect(other);
 
     /// <summary>
     /// Projects this vector onto a plane defined by the given normal,
@@ -689,8 +698,11 @@ public struct Vector2F : IEquatable<Vector2F>
     /// </remarks>
     /// <returns>A new <see cref="Vector2F"/> representing the component of this vector parallel to the surface.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool IsZeroApproximate()
-        => Utils.IsZeroApproximate(X) && Utils.IsZeroApproximate(Y);
+    public Vector2F Slide(in Vector2F other)
+    {
+        Debug.Assert(IsNormalized(other), "Normal vector must be normalized");
+        return this - Dot(other) * other;
+    }
 
     /// <summary>
     /// Returns a new <see cref="Vector2F"/> whose each component is clamped to the inclusive range defined by the corresponding components of two boundary vectors.
@@ -717,8 +729,11 @@ public struct Vector2F : IEquatable<Vector2F>
     /// </remarks>
     /// <returns>A new <see cref="Vector2F"/> with each component independently clamped to [min.component, max.component].</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Vector2F Reflect(in Vector2F other)
-        => 2.0f * other.Dot(this) * other - this;
+    public Vector2F Clamp(in Vector2F min, in Vector2F max)
+        => new Vector2F(
+            Math.Clamp(X, min.X, max.X),
+            Math.Clamp(Y, min.Y, max.Y)
+        );
 
     /// <summary>
     /// Returns a new <see cref="Vector2F"/> whose each component is clamped to the same scalar range [<paramref name="min"/>, <paramref name="max"/>].
@@ -743,20 +758,12 @@ public struct Vector2F : IEquatable<Vector2F>
     /// </remarks>
     /// <returns>A new <see cref="Vector2F"/> with both components clamped to [<paramref name="min"/>, <paramref name="max"/>].</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Vector2F Bounce(in Vector2F other)
-        => -Reflect(other);
-
-    /// <summary>
-    /// Projects this vector onto a plane defined by the given normal,
-    /// effectively sliding it along the surface.
-    /// Formula: slide = this - other * Dot(other)
-    /// </summary>
-    /// <param name="other">The normal vector of the surface.</param>
-    /// <returns>The component of this vector parallel to the surface.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Vector2F Slide(in Vector2F other)
-        => this - other * Dot(other);
-
+    public Vector2F Clamp(float min, float max)
+        => new Vector2F(
+            Math.Clamp(X, min, max),
+            Math.Clamp(Y, min, max)
+        );
+    
     /// <summary>
     /// Returns a normalized copy of the current vector (unit vector with length 1).
     /// If the vector is zero, NaN, or infinite, returns <see cref="Zero"/> instead.
@@ -782,24 +789,16 @@ public struct Vector2F : IEquatable<Vector2F>
     /// or <see cref="Zero"/> if the vector cannot be normalized.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Vector2F Clamp(in Vector2F min, in Vector2F max)
-        => new Vector2F(
-            Math.Clamp(X, min.X, max.X),
-            Math.Clamp(Y, min.Y, max.Y)
-        );
-
-    /// <summary>
-    /// Clamps each component of this vector to the same scalar range [min, max].
-    /// </summary>
-    /// <param name="min">The lower bound for both X and Y.</param>
-    /// <param name="max">The upper bound for both X and Y.</param>
-    /// <returns>A new vector with X and Y clamped to [min, max].</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Vector2F Clamp(float min, float max)
-        => new Vector2F(
-            Math.Clamp(X, min, max),
-            Math.Clamp(Y, min, max)
-        );
+    public Vector2F Normalize()
+    {
+        float lengthSquared = LengthSquared;
+        if (lengthSquared < Constant.Epsilon ||
+            float.IsNaN(lengthSquared) ||
+            float.IsInfinity(lengthSquared)) return Zero;
+        float length = (float)Math.Sqrt(lengthSquared);
+        return new Vector2F(X / length, Y / length);
+    }
+    
     
     /// <summary>
     /// Determines whether the current vector is normalized, i.e., its length is approximately equal to 1.
