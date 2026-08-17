@@ -108,56 +108,56 @@ public struct Vector2F : IEquatable<Vector2F>
     /// <summary>
     /// Determines whether two vectors are equal by comparing their components exactly.
     /// </summary>
-    public static bool operator ==(Vector2F a, Vector2F b) => a.X == b.X && a.Y == b.Y;
+    public static bool operator ==(Vector2F left, Vector2F right) => left.X == right.X && left.Y == right.Y;
 
     /// <summary>
     /// Determines whether two vectors are not equal.
     /// </summary>
-    public static bool operator !=(Vector2F a, Vector2F b) => !(a == b);
+    public static bool operator !=(Vector2F left, Vector2F right) => !(left == right);
     
     /// <summary>
     /// Checks if this vector is approximately equal to another vector within an epsilon tolerance.
     /// </summary>
-    /// <param name="other">The other vector to compare.</param>
+    /// <param name="vector">The vector to compare.</param>
     /// <returns>True if the absolute difference in each component is less than <see cref="Constant.Epsilon"/>.</returns>
-    public bool AlmostEquals(Vector2F other) => 
-        Math.Abs(X - other.X) < Constant.Epsilon && 
-        Math.Abs(Y - other.Y) < Constant.Epsilon;
+    public bool AlmostEquals(Vector2F vector) => 
+        Math.Abs(X - vector.X) < Constant.Epsilon && 
+        Math.Abs(Y - vector.Y) < Constant.Epsilon;
     
     /// <summary>
     /// Adds two vectors component-wise.
     /// </summary>
-    public static Vector2F operator +(Vector2F the, Vector2F other) 
-        => new Vector2F(the.X + other.X, the.Y + other.Y);
+    public static Vector2F operator +(Vector2F left, Vector2F right) 
+        => new Vector2F(left.X + right.X, left.Y + right.Y);
     
     /// <summary>
     /// Subtracts one vector from another component-wise.
     /// </summary>
-    public static Vector2F operator -(Vector2F the, Vector2F other) 
-        => new Vector2F(the.X - other.X, the.Y - other.Y);
+    public static Vector2F operator -(Vector2F left, Vector2F right) 
+        => new Vector2F(left.X - right.X, left.Y - right.Y);
     
-    public static Vector2F operator -(Vector2F the) 
-        => new Vector2F(-the.X, -the.Y);
-    
-    /// <summary>
-    /// Multiplies a vector by a scalar (scales all components).
-    /// </summary>
-    public static Vector2F operator *(Vector2F the, float scalar) 
-        => new Vector2F(scalar * the.X, scalar * the.Y);
-    
+    public static Vector2F operator -(Vector2F vector) 
+        => new Vector2F(-vector.X, -vector.Y);
     
     /// <summary>
     /// Multiplies a vector by a scalar (scales all components).
     /// </summary>
-    public static Vector2F operator *(float scalar, Vector2F the) 
-        => new Vector2F(scalar * the.X, scalar * the.Y);
+    public static Vector2F operator *(Vector2F left, float scalar) 
+        => new Vector2F(scalar * left.X, scalar * left.Y);
+    
+    
+    /// <summary>
+    /// Multiplies a vector by a scalar (scales all components).
+    /// </summary>
+    public static Vector2F operator *(float scalar, Vector2F right) 
+        => new Vector2F(scalar * right.X, scalar * right.Y);
     
     /// <summary>
     /// Divides a vector by a scalar (scales all components).
     /// </summary>
-    /// <exception cref="DivideByZeroException">Thrown if the scalar is zero.</exception>
-    public static Vector2F operator /(Vector2F the, float scalar) 
-        => new Vector2F(the.X / scalar, the.Y / scalar);
+    /// <exception cref="DivideByZeroException">Thrown if left scalar is zero.</exception>
+    public static Vector2F operator /(Vector2F left, float scalar) 
+        => new Vector2F(left.X / scalar, left.Y / scalar);
 
     /// <summary>
     /// Converts this vector to an angle (in radians) using <see cref="Math.Atan2(double, double)"/>.
@@ -226,12 +226,12 @@ public struct Vector2F : IEquatable<Vector2F>
     public Vector2F Abs() => new Vector2F(Math.Abs(X), Math.Abs(Y));
     
     /// <summary>
-    /// Returns a new vector where each component is the minimum of this vector's component and the corresponding component of the other vector.
+    /// Returns a new vector where each component is the minimum of this vector's component and the corresponding component of the vector.
     /// </summary>
-    /// <param name="other">The vector to compare with.</param>
+    /// <param name="vector">The vector to compare with.</param>
     /// <remarks>
     /// <para>
-    /// This method performs component-wise minimization: <c>result.X = Min(this.X, other.X)</c>, <c>result.Y = Min(this.Y, other.Y)</c>.
+    /// This method performs component-wise minimization: <c>result.X = Min(this.X, vector.X)</c>, <c>result.Y = Min(this.Y, vector.Y)</c>.
     /// It is useful for computing the lower bounds of a set of vectors or for clamping to an upper limit when combined with <see cref="Max(in Vector2F)"/>.
     /// </para>
     /// <para>
@@ -240,7 +240,7 @@ public struct Vector2F : IEquatable<Vector2F>
     /// </remarks>
     /// <returns>A new <see cref="Vector2F"/> where each component is the smaller of the two input components.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Vector2F Min(in Vector2F other) => new Vector2F(Math.Min(X, other.X), Math.Min(Y, other.Y));
+    public Vector2F Min(in Vector2F vector) => new Vector2F(Math.Min(X, vector.X), Math.Min(Y, vector.Y));
     
     /// <summary>
     /// Clamps each component of the given vector so that it is no less than the specified minimum value.
@@ -254,19 +254,19 @@ public struct Vector2F : IEquatable<Vector2F>
     /// It uses <see cref="Math.Max(float, float)"/> to enforce a lower bound: <c>result.X = Max(vector.X, min)</c>, <c>result.Y = Max(vector.Y, min)</c>.
     /// </para>
     /// <para>
-    /// This is the static counterpart of <see cref="ClampMinComponents(in Vector2F)"/>.
+    /// This is the static counterpart of <see cref="ClampFloor"/>.
     /// </para>
     /// </remarks>
     /// <returns>A new <see cref="Vector2F"/> with each component clamped to be at least <paramref name="min"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector2F ClampMinComponents(in Vector2F vector, float min)
+    public static Vector2F ClampFloor(in Vector2F vector, float min)
         => new Vector2F(
             Math.Max(vector.X, min),
             Math.Max(vector.Y, min)
         );
     
     /// <summary>
-    /// Instance version of <see cref="ClampMinComponents(in Vector2F, float)"/>.
+    /// Instance version of <see cref="ClampFloor(in Kernel.MathLib.Vector2F,float)"/>.
     /// Clamps each component of this vector so that it is no less than the corresponding component of the given min vector.
     /// </summary>
     /// <param name="min">The vector whose components define the lower bounds.</param>
@@ -278,25 +278,42 @@ public struct Vector2F : IEquatable<Vector2F>
     /// </remarks>
     /// <returns>A new <see cref="Vector2F"/> with each component clamped to be at least the corresponding component of <paramref name="min"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Vector2F ClampMinComponents(in Vector2F min)
+    public Vector2F ClampFloor(in Vector2F min)
         => new Vector2F(
             Math.Max(X, min.X),
             Math.Max(Y, min.Y)
         );
+
+    /// <summary>
+    /// Clamps each component of this vector to be no less than the specified minimum value.
+    /// Effectively computes the component-wise maximum of this vector and the given <paramref name="min"/>.
+    /// </summary>
+    /// <param name="min">The minimum allowed value for each component. All components will be at least this value.</param>
+    /// <returns>A new <see cref="Vector2F"/> where each component is the maximum of this vector's component and <paramref name="min"/>.</returns>
+    /// <remarks>
+    /// Despite the name "ClampFloor", this method performs a lower-bound clamp (floor) on each component.
+    /// It ensures that no component falls below the specified <paramref name="min"/> value.
+    /// This is equivalent to calling <c>Math.Max</c> on each component individually.
+    /// </remarks>
+    public Vector2F ClampFloor(float min)
+        => new Vector2F(
+            Math.Max(X, min),
+            Math.Max(Y, min)
+        );
     
     /// <summary>
-    /// Returns a new vector where each component is the maximum of this vector's component and the corresponding component of the other vector.
+    /// Returns a new vector where each component is the maximum of this vector's component and the corresponding component of the vector.
     /// </summary>
-    /// <param name="other">The vector to compare with.</param>
+    /// <param name="vector">The vector to compare with.</param>
     /// <remarks>
     /// <para>
-    /// Performs component-wise maximization: <c>result.X = Max(this.X, other.X)</c>, <c>result.Y = Max(this.Y, other.Y)</c>.
+    /// Performs component-wise maximization: <c>result.X = Max(this.X, vector.X)</c>, <c>result.Y = Max(this.Y, vector.Y)</c>.
     /// Useful for computing upper bounds or for clamping to a lower limit when combined with <see cref="Min(in Vector2F)"/>.
     /// </para>
     /// </remarks>
     /// <returns>A new <see cref="Vector2F"/> where each component is the larger of the two input components.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Vector2F Max(in Vector2F other) => new Vector2F(Math.Max(X, other.X), Math.Max(Y, other.Y));
+    public Vector2F Max(in Vector2F vector) => new Vector2F(Math.Max(X, vector.X), Math.Max(Y, vector.Y));
     
     /// <summary>
     /// Clamps each component of this vector so that it is no greater than the specified maximum value.
@@ -309,19 +326,36 @@ public struct Vector2F : IEquatable<Vector2F>
     /// It uses <see cref="Math.Min(float, float)"/> to enforce an upper bound: <c>result.X = Min(this.X, max)</c>, <c>result.Y = Min(this.Y, max)</c>.
     /// </para>
     /// <para>
-    /// This is the instance counterpart of <see cref="ClampMaxComponents(in Vector2F, float)"/>.
+    /// This is the instance counterpart of <see cref="ClampCeil(in Kernel.MathLib.Vector2F,float)"/>.
     /// </para>
     /// </remarks>
     /// <returns>A new <see cref="Vector2F"/> with each component clamped to be at most <paramref name="max"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Vector2F ClampMaxComponents(float max)
+    public Vector2F ClampCeil(float max)
         => new Vector2F(
             Math.Min(X, max),
             Math.Min(Y, max)
         );
+
+    /// <summary>
+    /// Clamps each component of this vector to be no greater than the corresponding component of the specified maximum vector.
+    /// Effectively computes the component-wise minimum of this vector and <paramref name="max"/>.
+    /// </summary>
+    /// <param name="max">The vector containing the maximum allowed values for each component.</param>
+    /// <returns>A new <see cref="Vector2F"/> where each component is the minimum of this vector's component and the corresponding component of <paramref name="max"/>.</returns>
+    /// <remarks>
+    /// Despite the name "ClampCeil", this method performs an upper-bound clamp (ceiling) on each component.
+    /// It ensures that no component exceeds the corresponding value in <paramref name="max"/>.
+    /// The <see langword="in"/> modifier passes the argument by reference without copying, improving performance for large structs.
+    /// </remarks>
+    public Vector2F ClampCeil(in Vector2F max)
+        => new Vector2F(
+            Math.Min(X, max.X),
+            Math.Min(Y, max.Y)
+        );
     
     /// <summary>
-    /// Static version of <see cref="ClampMaxComponents(float)"/>.
+    /// Static version of <see cref="ClampCeil"/>.
     /// Clamps each component of the given vector so that it is no greater than the specified maximum value.
     /// </summary>
     /// <param name="vector">The input vector.</param>
@@ -333,7 +367,7 @@ public struct Vector2F : IEquatable<Vector2F>
     /// </remarks>
     /// <returns>A new <see cref="Vector2F"/> with each component clamped to be at most <paramref name="max"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector2F ClampMaxComponents(in Vector2F vector, float max)
+    public static Vector2F ClampCeil(in Vector2F vector, float max)
         => new Vector2F(
             Math.Min(vector.X, max),
             Math.Min(vector.Y, max)
@@ -342,7 +376,7 @@ public struct Vector2F : IEquatable<Vector2F>
     /// <summary>
     /// Computes the Euclidean distance from this vector to another vector.
     /// </summary>
-    /// <param name="other">The target vector to measure distance to.</param>
+    /// <param name="vector">The target vector to measure distance to.</param>
     /// <remarks>
     /// <para>
     /// The Euclidean distance is calculated as the square root of the sum of squared differences of corresponding components:
@@ -358,16 +392,16 @@ public struct Vector2F : IEquatable<Vector2F>
     /// in performance‑critical scenarios such as collision detection or pathfinding.
     /// </para>
     /// </remarks>
-    /// <returns>The Euclidean distance between this vector and <paramref name="other"/> as a <see langword="float"/>.</returns>
+    /// <returns>The Euclidean distance between this vector and <paramref name="vector"/> as a <see langword="float"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public float DistanceTo(in Vector2F other)
-        => (float)Math.Sqrt(DistanceSquaredTo(other));
+    public float DistanceTo(in Vector2F vector)
+        => (float)Math.Sqrt(DistanceSquaredTo(vector));
 
     /// <summary>
     /// Computes the squared Euclidean distance from this vector to another vector.
     /// Avoids the square‑root operation for efficiency.
     /// </summary>
-    /// <param name="other">The target vector to measure squared distance to.</param>
+    /// <param name="vector">The target vector to measure squared distance to.</param>
     /// <remarks>
     /// <para>
     /// The squared distance is computed as <c>(X₁−X₂)² + (Y₁−Y₂)²</c>.
@@ -386,20 +420,20 @@ public struct Vector2F : IEquatable<Vector2F>
     /// The method is aggressively inlined for maximum performance.
     /// </para>
     /// </remarks>
-    /// <returns>The squared Euclidean distance between this vector and <paramref name="other"/> as a <see langword="float"/>.</returns>
+    /// <returns>The squared Euclidean distance between this vector and <paramref name="vector"/> as a <see langword="float"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public float DistanceSquaredTo(in Vector2F other)
-        => (X - other.X) * (X - other.X) + (Y - other.Y) * (Y - other.Y);
+    public float DistanceSquaredTo(in Vector2F vector)
+        => (X - vector.X) * (X - vector.X) + (Y - vector.Y) * (Y - vector.Y);
     
     /// <summary>
     /// Computes the dot product of this vector and another vector.
     /// </summary>
-    /// <param name="other">The other vector to compute the dot product with.</param>
+    /// <param name="vector">The vector to compute the dot product with.</param>
     /// <remarks>
     /// <para>
-    /// The dot product is defined as <c>X · other.X + Y · other.Y</c>.
+    /// The dot product is defined as <c>X · vector.X + Y · vector.Y</c>.
     /// It measures the projection of one vector onto another and is commonly used
-    /// to determine angles (via <c>cosθ = Dot / (|this|·|other|)</c>) or to test orthogonality
+    /// to determine angles (via <c>cosθ = Dot / (|this|·|vector|)</c>) or to test orthogonality
     /// (dot product of zero means perpendicular vectors).
     /// </para>
     /// <para>
@@ -409,19 +443,34 @@ public struct Vector2F : IEquatable<Vector2F>
     /// </remarks>
     /// <returns>A scalar value representing the dot product of the two vectors.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public float Dot(in Vector2F other) 
-        => X * other.X + Y * other.Y;
+    public float Dot(in Vector2F vector) 
+        => X * vector.X + Y * vector.Y;
+    
+    /// <summary>
+    /// Computes the dot product of two vectors.
+    /// The dot product is the sum of the products of corresponding components: a.X * b.X + a.Y * b.Y.
+    /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns>The scalar dot product of the two vectors.</returns>
+    /// <remarks>
+    /// The dot product represents the cosine of the angle between the vectors scaled by their magnitudes.
+    /// It is commonly used for projection, collision detection, and lighting calculations.
+    /// The <see langword="in"/> modifier passes the arguments by reference without copying, improving performance for large structs.
+    /// </remarks>
+    public static float Dot(in Vector2F a, in Vector2F b) 
+        => a.X * b.X + a.Y * b.Y;
 
     /// <summary>
     /// Computes the 2D cross product (scalar) of this vector and another vector.
-    /// The result is <c>X · other.Y - Y · other.X</c>, representing the signed area of the parallelogram spanned by the two vectors.
+    /// The result is <c>X · vector.Y - Y · vector.X</c>, representing the signed area of the parallelogram spanned by the two vectors.
     /// </summary>
-    /// <param name="other">The other vector to compute the cross product with.</param>
+    /// <param name="vector">The vector vector to compute the cross product with.</param>
     /// <remarks>
     /// <para>
     /// In 2D, the cross product yields a scalar (often called the “perp dot product” or “wedge product”).
     /// Its magnitude equals the area of the parallelogram formed by the two vectors.
-    /// The sign indicates orientation: positive if <paramref name="other"/> is counter‑clockwise from this vector,
+    /// The sign indicates orientation: positive if <paramref name="vector"/> is counter‑clockwise from this vector,
     /// negative if clockwise, and zero if they are collinear.
     /// </para>
     /// <para>
@@ -434,9 +483,70 @@ public struct Vector2F : IEquatable<Vector2F>
     /// </remarks>
     /// <returns>A scalar representing the 2D cross product (signed area).</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public float Cross(in Vector2F other)
-        => X * other.Y - Y * other.X;
+    public float Cross(in Vector2F vector)
+        => X * vector.Y - Y * vector.X;
+    
+    /// <summary>
+    /// Projects this vector onto another non-zero vector.
+    /// Formula: <c>project = (this · onto) / (onto · onto) * onto</c>.
+    /// </summary>
+    /// <param name="onto">The vector to project onto. Must not be a zero vector.</param>
+    /// <remarks>
+    /// <para>
+    /// The result is a vector that is parallel to <paramref name="onto"/> and represents the component 
+    /// of this vector that lies along the direction of <paramref name="onto"/>.
+    /// </para>
+    /// <para>
+    /// Unlike reflection or sliding, projection does not require <paramref name="onto"/> to be a unit vector.
+    /// A debug assertion checks that the target vector is not zero to avoid division by zero.
+    /// </para>
+    /// <para>
+    /// The method is marked with <see cref="MethodImplOptions.AggressiveInlining"/> to minimize overhead 
+    /// in performance-critical paths.
+    /// </para>
+    /// </remarks>
+    /// <returns>A new <see cref="Vector2F"/> representing the projection of this vector onto <paramref name="onto"/>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Vector2F Project(in Vector2F onto)
+    {
+        Debug.Assert(!onto.IsZeroApproximate(), "Cannot project onto a zero vector");
+        float denominator = onto.LengthSquared;
+        float scalar = Dot(this, onto) / denominator;
+        return new Vector2F(scalar * onto.X, scalar * onto.Y);
+    }
 
+    /// <summary>
+    /// Projects one vector onto another vector.
+    /// The projection of <paramref name="vector"/> onto <paramref name="onto"/> yields a new vector parallel to <paramref name="onto"/>.
+    /// </summary>
+    /// <param name="vector">The source vector to project.</param>
+    /// <param name="onto">The target vector onto which to project. Must not be a zero vector.</param>
+    /// <returns>A new <see cref="Vector2F"/> representing the projection of <paramref name="vector"/> onto <paramref name="onto"/>.</returns>
+    /// <remarks>
+    /// The projection is computed using the formula: (<paramref name="vector"/> · <paramref name="onto"/>) / (<paramref name="onto"/> · <paramref name="onto"/>) * <paramref name="onto"/>.
+    /// A debug assertion checks that the target vector is not approximately zero to avoid division by zero.
+    /// </remarks>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector2F Project(in Vector2F vector, in Vector2F onto)
+    {
+        Debug.Assert(!onto.IsZeroApproximate(), "Cannot project onto a zero vector");
+        float denominator = onto.LengthSquared;
+        float scalar = Dot(vector, onto) / denominator;
+        return new Vector2F(scalar * onto.X, scalar * onto.Y);
+    }
+
+    /// <summary>
+    /// Computes a vector orthogonal (perpendicular) to this vector.
+    /// The result is obtained by swapping the components and negating the second component: (Y, -X).
+    /// </summary>
+    /// <returns>A new <see cref="Vector2F"/> that is perpendicular to the original vector.</returns>
+    /// <remarks>
+    /// This returns a clockwise rotation of 90 degrees (i.e., the right-hand normal).
+    /// For a counter-clockwise rotation, use the commented-out <c>Perpendicular</c> method: (-Y, X).
+    /// </remarks>
+    public Vector2F Orthogonal()
+        => new Vector2F(Y, -X);
+    
     /// <summary>
     /// Returns a new vector where each component is the sign of the original component.
     /// Possible values are -1, 0, or 1.
@@ -575,7 +685,7 @@ public struct Vector2F : IEquatable<Vector2F>
     /// Determines whether this vector is approximately equal to another vector,
     /// using an approximate equality check per component.
     /// </summary>
-    /// <param name="other">The other vector to compare.</param>
+    /// <param name="vector">The vector to compare.</param>
     /// <remarks>
     /// <para>
     /// This method delegates to <see cref="Utils.IsEqualApproximate(float, float)"/> for each component.
@@ -592,8 +702,8 @@ public struct Vector2F : IEquatable<Vector2F>
     /// the tolerance defined in <see cref="Utils.IsEqualApproximate(float, float)"/>; otherwise <see langword="false"/>.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool IsEqualApproximate(Vector2F other)
-        => Utils.IsEqualApproximate(X, other.X) && Utils.IsEqualApproximate(Y, other.Y);
+    public bool IsEqualApproximate(Vector2F vector)
+        => Utils.IsEqualApproximate(X, vector.X) && Utils.IsEqualApproximate(Y, vector.Y);
     
     /// <summary>
     /// Checks whether this vector is approximately the zero vector.
@@ -641,12 +751,12 @@ public struct Vector2F : IEquatable<Vector2F>
 
     /// <summary>
     /// Computes the reflection of this vector about a given normal vector.
-    /// Formula: <c>reflect = this - 2 · Dot(other) · other</c>.
+    /// Formula: <c>reflect = this - 2 · Dot(normal) · normal</c>.
     /// </summary>
-    /// <param name="other">The normal vector used as the mirror axis.</param>
+    /// <param name="normal">The normal vector used as the mirror axis.</param>
     /// <remarks>
     /// <para>
-    /// The reflection formula assumes the normal vector <paramref name="other"/> is a unit vector for correct geometric results.
+    /// The reflection formula assumes the normal vector <paramref name="normal"/> is a unit vector for correct geometric results.
     /// A debug assertion verifies that the normal is normalized; if the assertion fails, ensure the provided normal is normalized before calling this method.
     /// </para>
     /// <para>
@@ -655,17 +765,17 @@ public struct Vector2F : IEquatable<Vector2F>
     /// </remarks>
     /// <returns>A new <see cref="Vector2F"/> representing the reflected direction.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Vector2F Reflect(in Vector2F other)
+    public Vector2F Reflect(in Vector2F normal)
     {
-        Debug.Assert(IsNormalized(other), "Normal vector must be normalized");
-        return this - 2 * Dot(other) * other;
+        Debug.Assert(IsNormalized(normal), "Normal vector must be normalized");
+        return this - 2 * Dot(normal) * normal;
     }
 
     /// <summary>
     /// Computes the bounce direction by negating the reflection of this vector about the given normal.
-    /// Equivalent to <c>-Reflect(other)</c>.
+    /// Equivalent to <c>-Reflect(normal)</c>.
     /// </summary>
-    /// <param name="other">The normal vector used as the mirror axis.</param>
+    /// <param name="normal">The normal vector used as the mirror axis.</param>
     /// <remarks>
     /// <para>
     /// Bounce is commonly used in collision response to reverse the velocity component perpendicular to a surface.
@@ -677,15 +787,15 @@ public struct Vector2F : IEquatable<Vector2F>
     /// </remarks>
     /// <returns>A new <see cref="Vector2F"/> representing the bounced (inverted reflection) direction.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Vector2F Bounce(in Vector2F other)
-        => -Reflect(other);
+    public Vector2F Bounce(in Vector2F normal)
+        => -Reflect(normal);
 
     /// <summary>
     /// Projects this vector onto a plane defined by the given normal,
     /// effectively computing the component parallel to the surface.
-    /// Formula: <c>slide = this - Dot(other) · other</c>.
+    /// Formula: <c>slide = this - Dot(normal) · normal</c>.
     /// </summary>
-    /// <param name="other">The normal vector of the surface.</param>
+    /// <param name="normal">The normal vector of the surface.</param>
     /// <remarks>
     /// <para>
     /// This operation removes the component of the vector that is perpendicular to the normal,
@@ -698,10 +808,10 @@ public struct Vector2F : IEquatable<Vector2F>
     /// </remarks>
     /// <returns>A new <see cref="Vector2F"/> representing the component of this vector parallel to the surface.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Vector2F Slide(in Vector2F other)
+    public Vector2F Slide(in Vector2F normal)
     {
-        Debug.Assert(IsNormalized(other), "Normal vector must be normalized");
-        return this - Dot(other) * other;
+        Debug.Assert(IsNormalized(normal), "Normal vector must be normalized");
+        return this - Dot(normal) * normal;
     }
 
     /// <summary>
@@ -822,11 +932,11 @@ public struct Vector2F : IEquatable<Vector2F>
     /// <summary>
     /// Determines whether the specified vector is normalized.
     /// </summary>
-    /// <param name="other">The vector to test. Passed by reference (<see langword="in"/>) to avoid copying and improve performance.</param>
+    /// <param name="vector">The vector to test. Passed by reference (<see langword="in"/>) to avoid copying and improve performance.</param>
     /// <remarks>
     /// <para>
     /// This overload allows checking the normalization state of another <see cref="Vector2F"/> instance without affecting the current one.
-    /// It follows the same logic as the parameterless version: compares the squared length of <paramref name="other"/> to 1 using <see cref="Constant.Epsilon"/> as tolerance.
+    /// It follows the same logic as the parameterless version: compares the squared length of <paramref name="vector"/> to 1 using <see cref="Constant.Epsilon"/> as tolerance.
     /// </para>
     /// <para>
     /// The <see langword="in"/> modifier indicates that the argument is passed by reference but cannot be modified inside the method,
@@ -834,10 +944,33 @@ public struct Vector2F : IEquatable<Vector2F>
     /// </para>
     /// </remarks>
     /// <returns>
-    /// <see langword="true"/> if the absolute difference between <paramref name="other"/>.LengthSquared and 1 is less than <see cref="Constant.Epsilon"/>;
+    /// <see langword="true"/> if the absolute difference between <paramref name="vector"/>.LengthSquared and 1 is less than <see cref="Constant.Epsilon"/>;
     /// otherwise, <see langword="false"/>.
     /// </returns>
-    public bool IsNormalized(in Vector2F other) => Math.Abs(other.LengthSquared - 1f) < Constant.Epsilon;
+    public bool IsNormalized(in Vector2F vector) => Math.Abs(vector.LengthSquared - 1f) < Constant.Epsilon;
+    
+    /// <summary>
+    /// Moves this vector towards a target vector by a specified maximum distance (delta).
+    /// If the distance to the target is less than or equal to delta (or negligible), the target vector is returned directly.
+    /// Otherwise, the vector is advanced by delta units along the direction to the target.
+    /// </summary>
+    /// <param name="to">The target vector to move towards.</param>
+    /// <param name="delta">The maximum distance to move. Must be non-negative (typically positive).</param>
+    /// <returns>
+    /// A new <see cref="Vector2F"/> that is either the target vector (if within delta) 
+    /// or this vector moved delta units towards the target.
+    /// </returns>
+    /// <remarks>
+    /// This method is useful for smooth interpolation, chasing behaviors, or gradual movement.
+    /// It ensures the result never overshoots the target.
+    /// The comparison against <see cref="Constant.Epsilon"/> prevents division by zero or movement when vectors are nearly identical.
+    /// </remarks>
+    public Vector2F MoveToward(Vector2F to, float delta)
+    {
+        Vector2F vectorDelta = to - this;
+        float length = vectorDelta.Length;
+        return length <= delta || length <= Constant.Epsilon ? to : this + (vectorDelta / length * delta);
+    }
     
     /// <summary>
     /// Computes a hash code for this vector using FNV-1a hash combination.
