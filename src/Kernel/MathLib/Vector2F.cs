@@ -145,7 +145,6 @@ public struct Vector2F : IEquatable<Vector2F>
     public static Vector2F operator *(Vector2F left, float scalar) 
         => new Vector2F(scalar * left.X, scalar * left.Y);
     
-    
     /// <summary>
     /// Multiplies a vector by a scalar (scales all components).
     /// </summary>
@@ -153,9 +152,15 @@ public struct Vector2F : IEquatable<Vector2F>
         => new Vector2F(scalar * right.X, scalar * right.Y);
     
     /// <summary>
+    /// Computes the dot product of two vectors.
+    /// </summary>
+    public static float operator *(Vector2F left, Vector2F right)
+        => left.X * right.X + left.Y * right.Y;
+    
+    /// <summary>
     /// Divides a vector by a scalar (scales all components).
     /// </summary>
-    /// <exception cref="DivideByZeroException">Thrown if left scalar is zero.</exception>
+    /// <exception cref="ArgumentException">Thrown if left scalar is zero.</exception>
     public static Vector2F operator /(Vector2F left, float scalar) 
         => new Vector2F(left.X / scalar, left.Y / scalar);
 
@@ -177,7 +182,7 @@ public struct Vector2F : IEquatable<Vector2F>
     /// </remarks>
     /// <returns>The angle in radians corresponding to the direction of this vector.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public float ToAngle()
+    public float ToAngle() 
         => (float)Math.Atan2(Y, X);
 
     /// <summary>
@@ -949,6 +954,67 @@ public struct Vector2F : IEquatable<Vector2F>
     /// </returns>
     public bool IsNormalized(in Vector2F vector) => Math.Abs(vector.LengthSquared - 1f) < Constant.Epsilon;
     
+    /// <summary>
+    /// Determines whether the current <see cref="Vector2F"/> is parallel to the specified vector.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// This method calculates the 2D cross product (outer product) using the formula 
+    /// <c>X * vector.Y - Y * vector.X</c>. If the result equals zero, the two vectors are 
+    /// considered parallel (or collinear). This indicates that the angle between them is 
+    /// 0° or 180°.
+    /// </para>
+    /// <para>
+    /// Note: This implementation uses exact equality comparison (<c>== 0</c>). In scenarios 
+    /// involving floating-point calculations (e.g., game engine math), consider using a 
+    /// tolerance-based check to account for precision errors.
+    /// </para>
+    /// </remarks>
+    /// <param name="vector">The <see cref="Vector2F"/> to compare against.</param>
+    /// <returns>
+    /// <see langword="true"/> if the vectors are parallel; otherwise, <see langword="false"/>.
+    /// </returns>
+    /// <example>
+    /// <code lang="csharp">
+    /// <![CDATA[
+    /// Vector2F v1 = new Vector2F(1.0f, 2.0f);
+    /// Vector2F v2 = new Vector2F(2.0f, 4.0f);
+    /// bool result = v1.IsParallel(v2); // Returns true
+    /// ]]>
+    /// </code>
+    /// </example>
+    public bool IsParallel(in Vector2F vector) => X * vector.Y - Y * vector.X == 0;
+
+    /// <summary>
+    /// Determines whether the current <see cref="Vector2F"/> is perpendicular (orthogonal) 
+    /// to the specified vector.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// This method calculates the dot product (inner product) using the formula 
+    /// <c>X * vector.X + Y * vector.Y</c>. If the result equals zero, the two vectors are 
+    /// considered perpendicular, meaning the angle between them is 90° or 270°.
+    /// </para>
+    /// <para>
+    /// Note: This implementation uses exact equality comparison (<c>== 0</c>). For 
+    /// floating-point robustness, a tolerance (epsilon) check is recommended in production code.
+    /// </para>
+    /// </remarks>
+    /// <param name="vector">The <see cref="Vector2F"/> to compare against.</param>
+    /// <returns>
+    /// <see langword="true"/> if the vectors are perpendicular; otherwise, <see langword="false"/>.
+    /// </returns>
+    /// <example>
+    /// <code lang="csharp">
+    /// <![CDATA[
+    /// Vector2F v1 = new Vector2F(1.0f, 0.0f);
+    /// Vector2F v2 = new Vector2F(0.0f, 1.0f);
+    /// bool result = v1.IsPerpendicular(v2); // Returns true
+    /// ]]>
+    /// </code>
+    /// </example>
+    public bool IsPerpendicular(in Vector2F vector) => X * vector.X + Y * vector.Y == 0;
+
     /// <summary>
     /// Moves this vector towards a target vector by a specified maximum distance (delta).
     /// If the distance to the target is less than or equal to delta (or negligible), the target vector is returned directly.
