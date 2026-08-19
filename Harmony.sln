@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{1EF416A4-1329-4811-8945-ADF21BD6DBDC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kernel.MathLib.Tests", "Kernel.MathLib.Tests\Kernel.MathLib.Tests.csproj", "{D99C0681-15FE-4590-A7FB-BAAB62305D06}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmark", "Benchmark\Benchmark.csproj", "{D57B06FF-9069-46E8-B29B-597D2DBC2D0F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kernel", "src\Kernel\Kernel.csproj", "{70B766A2-0CBC-49CE-88CB-BEE1941A6899}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D99C0681-15FE-4590-A7FB-BAAB62305D06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D99C0681-15FE-4590-A7FB-BAAB62305D06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D99C0681-15FE-4590-A7FB-BAAB62305D06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D99C0681-15FE-4590-A7FB-BAAB62305D06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D57B06FF-9069-46E8-B29B-597D2DBC2D0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D57B06FF-9069-46E8-B29B-597D2DBC2D0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D57B06FF-9069-46E8-B29B-597D2DBC2D0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D57B06FF-9069-46E8-B29B-597D2DBC2D0F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70B766A2-0CBC-49CE-88CB-BEE1941A6899}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70B766A2-0CBC-49CE-88CB-BEE1941A6899}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70B766A2-0CBC-49CE-88CB-BEE1941A6899}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70B766A2-0CBC-49CE-88CB-BEE1941A6899}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
