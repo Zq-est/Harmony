@@ -9,6 +9,8 @@ on:
       - main
     types: [ synchronize ]
     
+permissions: 
+  contents: read
     
 jobs:
   build:
