@@ -108,12 +108,12 @@ public struct Vector2F : IEquatable<Vector2F>
     /// <summary>
     /// Determines whether two vectors are equal by comparing their components exactly.
     /// </summary>
-    public static bool operator ==(Vector2F a, Vector2F b) => a.X == b.X && a.Y == b.Y;
+    public static bool operator ==(Vector2F left, Vector2F right) => left.X == right.X && left.Y == right.Y;
 
     /// <summary>
     /// Determines whether two vectors are not equal.
     /// </summary>
-    public static bool operator !=(Vector2F a, Vector2F b) => !(a == b);
+    public static bool operator !=(Vector2F left, Vector2F right) => !(left == right);
     
     /// <summary>
     /// Checks if this vector is approximately equal to another vector within an epsilon tolerance.
@@ -127,14 +127,14 @@ public struct Vector2F : IEquatable<Vector2F>
     /// <summary>
     /// Adds two vectors component-wise.
     /// </summary>
-    public static Vector2F operator +(Vector2F the, Vector2F other) 
-        => new Vector2F(the.X + other.X, the.Y + other.Y);
+    public static Vector2F operator +(Vector2F left, Vector2F right) 
+        => new Vector2F(left.X + right.X, left.Y + right.Y);
     
     /// <summary>
     /// Subtracts one vector from another component-wise.
     /// </summary>
-    public static Vector2F operator -(Vector2F the, Vector2F other) 
-        => new Vector2F(the.X - other.X, the.Y - other.Y);
+    public static Vector2F operator -(Vector2F left, Vector2F right) 
+        => new Vector2F(left.X - right.X, left.Y - right.Y);
     
     public static Vector2F operator -(Vector2F the) 
         => new Vector2F(-the.X, -the.Y);
@@ -142,22 +142,29 @@ public struct Vector2F : IEquatable<Vector2F>
     /// <summary>
     /// Multiplies a vector by a scalar (scales all components).
     /// </summary>
-    public static Vector2F operator *(Vector2F the, float scalar) 
-        => new Vector2F(scalar * the.X, scalar * the.Y);
+    public static Vector2F operator *(Vector2F left, float scalar) 
+        => new Vector2F(scalar * left.X, scalar * left.Y);
     
     
     /// <summary>
     /// Multiplies a vector by a scalar (scales all components).
     /// </summary>
-    public static Vector2F operator *(float scalar, Vector2F the) 
-        => new Vector2F(scalar * the.X, scalar * the.Y);
-    
+    public static Vector2F operator *(float scalar, Vector2F right) 
+        => new Vector2F(scalar * right.X, scalar * right.Y);
+
+    public static float operator *(Vector2F left, Vector2F right)
+        => left.X * right.X + left.Y * right.Y;
+
     /// <summary>
     /// Divides a vector by a scalar (scales all components).
     /// </summary>
     /// <exception cref="DivideByZeroException">Thrown if the scalar is zero.</exception>
-    public static Vector2F operator /(Vector2F the, float scalar) 
-        => new Vector2F(the.X / scalar, the.Y / scalar);
+    public static Vector2F operator /(Vector2F left, float scalar)
+    {
+        if (scalar == 0f) 
+            throw new DivideByZeroException();
+        return new Vector2F(left.X / scalar, left.Y / scalar);
+    }
 
     /// <summary>
     /// Converts this vector to an angle (in radians) using <see cref="Math.Atan2(double, double)"/>.
@@ -167,8 +174,8 @@ public struct Vector2F : IEquatable<Vector2F>
     /// <para>
     /// The angle is computed as <c>Atan2(Y, X)</c>, which returns a value in the range [-π, π].
     /// A positive angle indicates a counter‑clockwise rotation from the positive X axis.
-    /// This method is the inverse of <see cref="FromAngle(float)"/>: for any unit vector,
-    /// <c>FromAngle(v.ToAngle())</c> yields a vector approximately equal to <paramref name="v"/>.
+    /// This method is the inverse of <see cref="FromAngleRadian"/>: for any unit vector,
+    /// <c>FromAngleRadian(v.ToAngle())</c> yields a vector approximately equal to <paramref name="v"/>.
     /// </para>
     /// <para>
     /// The method is marked with <see cref="MethodImplOptions.AggressiveInlining"/> to reduce call overhead
@@ -202,7 +209,32 @@ public struct Vector2F : IEquatable<Vector2F>
     /// </remarks>
     /// <returns>A unit <see cref="Vector2F"/> pointing in the direction of the given angle.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector2F FromAngle(float angle)
+    public static Vector2F FromAngleRadian(float angle)
+        => new Vector2F((float)Math.Cos(angle), (float)Math.Sin(angle));
+    
+    /// <summary>
+    /// Creates a unit vector from an angle (in radians).
+    /// This is a static factory method that returns a new vector pointing in the direction specified by the angle.
+    /// </summary>
+    /// <param name="angle">The angle in radians. Measured counterclockwise from the positive X axis.</param>
+    /// <remarks>
+    /// <para>
+    /// The returned vector has components <c>(Cos(angle), Sin(angle))</c> and is guaranteed to be a unit vector
+    /// (within floating‑point precision). This method is the inverse of <see cref="ToAngle()"/>.
+    /// </para>
+    /// <para>
+    /// Example usage:
+    /// <code lang="csharp">
+    /// Vector2F direction = Vector2F.FromAngle(Math.PI / 4); // Points at 45°
+    /// </code>
+    /// </para>
+    /// <para>
+    /// The method is aggressively inlined for performance.
+    /// </para>
+    /// </remarks>
+    /// <returns>A unit <see cref="Vector2F"/> pointing in the direction of the given angle.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector2F FromAngleRadian(double angle)
         => new Vector2F((float)Math.Cos(angle), (float)Math.Sin(angle));
 
     /// <summary>
@@ -264,6 +296,34 @@ public struct Vector2F : IEquatable<Vector2F>
             Math.Max(vector.X, min),
             Math.Max(vector.Y, min)
         );
+
+    /// <summary>
+    /// Clamps the components of the vector to a specified minimum value, returning a new <see cref="Vector2F"/> instance.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// This method evaluates each component (X and Y) of the current vector.
+    /// If a component's value is less than the specified <paramref name="min"/>, it is replaced by <paramref name="min"/> using <see cref="Math.Max"/>.
+    /// Otherwise, the original value is retained. This method applies the <see cref="MethodImplOptions.AggressiveInlining"/> attribute to suggest JIT inlining for optimal performance.
+    /// </para>
+    /// </remarks>
+    /// <param name="min">The minimum threshold value to clamp each component to.</param>
+    /// <returns>A new <see cref="Vector2F"/> where each component is at least <paramref name="min"/>.</returns>
+    /// <example>
+    /// <code lang="csharp">
+    /// <![CDATA[
+    /// Vector2F vector = new Vector2F(-5.0f, 10.0f);
+    /// Vector2F clampedVector = vector.ClampMinComponents(0.0f);
+    /// // clampedVector.X is 0.0f, clampedVector.Y is 10.0f
+    /// ]]>
+    /// </code>
+    /// </example>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Vector2F ClampMinComponents(float min)
+        => new Vector2F(
+            Math.Max(X, min),
+            Math.Max(Y, min)
+        );
     
     /// <summary>
     /// Instance version of <see cref="ClampMinComponents(in Vector2F, float)"/>.
@@ -299,7 +359,7 @@ public struct Vector2F : IEquatable<Vector2F>
     public Vector2F Max(in Vector2F other) => new Vector2F(Math.Max(X, other.X), Math.Max(Y, other.Y));
     
     /// <summary>
-    /// Clamps each component of this vector so that it is no greater than the specified maximum value.
+    /// Clamps each component of this vector so that it is not greater than the specified maximum value.
     /// Effectively ensures every component ≤ <paramref name="max"/>.
     /// </summary>
     /// <param name="max">The upper bound for each component.</param>
@@ -322,7 +382,7 @@ public struct Vector2F : IEquatable<Vector2F>
     
     /// <summary>
     /// Static version of <see cref="ClampMaxComponents(float)"/>.
-    /// Clamps each component of the given vector so that it is no greater than the specified maximum value.
+    /// Clamps each component of the given vector so that it is not greater than the specified maximum value.
     /// </summary>
     /// <param name="vector">The input vector.</param>
     /// <param name="max">The upper bound for each component.</param>
@@ -337,6 +397,41 @@ public struct Vector2F : IEquatable<Vector2F>
         => new Vector2F(
             Math.Min(vector.X, max),
             Math.Min(vector.Y, max)
+        );
+
+    /// <summary>
+    /// Restricts the components of the current <see cref="Vector2F"/> to a specified maximum value.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// This method performs a component-wise upper-bound clamp operation. 
+    /// It compares each component (X, Y) of the current vector with the corresponding component of the <paramref name="max"/> vector, 
+    /// and returns a new <see cref="Vector2F"/> where each component is the minimum of the two values.
+    /// </para>
+    /// <para>
+    /// The method is marked with <see cref="MethodImplOptions.AggressiveInlining"/> to minimize call overhead in performance-critical 
+    /// game engine scenarios (e.g., math libraries using Vortice.DirectX11 or opnetk). The <paramref name="max"/> parameter is passed 
+    /// as <see langword="in"/> to avoid struct copying while ensuring immutability.
+    /// </para>
+    /// </remarks>
+    /// <param name="max">The vector containing the maximum allowed values for each component.</param>
+    /// <returns>A new <see cref="Vector2F"/> with components clamped to not exceed the corresponding components in <paramref name="max"/>.</returns>
+    /// <example>
+    /// This example demonstrates how to use <c>ClampMaxComponents</c> to clamp a vector's values.
+    /// <code lang="csharp">
+    /// <![CDATA[
+    /// Vector2F vector = new Vector2F(10.0f, -5.0f);
+    /// Vector2F maxValues = new Vector2F(0.0f, 0.0f);
+    /// Vector2F result = vector.ClampMaxComponents(in maxValues);
+    /// // result will be (0.0f, -5.0f) because X is clamped to 0.0f, while Y remains -5.0f.
+    /// ]]>
+    /// </code>
+    /// </example>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Vector2F ClampMaxComponents(in Vector2F max)
+        => new Vector2F(
+            Math.Min(X, max.X),
+            Math.Min(Y, max.Y)
         );
     
     /// <summary>
@@ -727,7 +822,7 @@ public struct Vector2F : IEquatable<Vector2F>
     /// the behavior is undefined because <see cref="Math.Clamp(float, float, float)"/> requires <c>min ≤ max</c>.
     /// </para>
     /// </remarks>
-    /// <returns>A new <see cref="Vector2F"/> with each component independently clamped to [min.component, max.component].</returns>
+    /// <returns>A new <see cref="Vector2F"/> with each component independently clamped to [min.Component, max.Component].</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Vector2F Clamp(in Vector2F min, in Vector2F max)
         => new Vector2F(
