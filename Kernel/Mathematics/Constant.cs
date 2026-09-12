@@ -1,4 +1,4 @@
-﻿namespace Kernel.MathLib;
+﻿namespace Mathematics;
 
 public struct Constant
 {
