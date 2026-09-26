@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 
-namespace Kernel.MathLib;
+namespace Mathematics;
 
 /// <summary>
 /// Represents a two-dimensional vector with single-precision floating-point components.
