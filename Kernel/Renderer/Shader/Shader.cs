@@ -5,7 +5,7 @@ namespace Renderer;
 
 public class Shader : IDisposable
 {
-    private int Id { get; set; }
+    public readonly int Id;
     private int VertexShader { get; set; }
     private int FragmentShader { get; set; }
 

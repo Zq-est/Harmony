@@ -9,7 +9,7 @@ public class VertexArray : IDisposable
     public unsafe void ConfigureVertexAttributes<T>(int index, int size, VertexAttribPointerType type, bool normalized, int stride, int offset) where T : unmanaged
     {
         GL.VertexAttribPointer(index, size, type, normalized, stride * sizeof(T), offset * sizeof(T));
-        GL.EnableVertexAttribArray(0);
+        GL.EnableVertexAttribArray(index);
     }
     
     public void Bind()
