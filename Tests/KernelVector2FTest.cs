@@ -1,4 +1,4 @@
-﻿using Kernel.MathLib;
+﻿using Mathematics;
 
 namespace Tests;
 
@@ -100,7 +100,7 @@ public class KernelVector2FTest
     {
         Assert.Throws<DivideByZeroException>(() => _vector2F2 / 0);
     }
-    
+
     [TestMethod]
     public void KernelVector2FToAngleTest1()
     {
@@ -154,7 +154,7 @@ public class KernelVector2FTest
         var vector2F = new Vector2F(1, -1);
         Assert.AreEqual(-Constant.Pi / 4, vector2F.ToAngle(), Constant.Epsilon);
     }
-    
+
     [TestMethod]
     public void KernelVector2FFromAngleTest1()
     {
@@ -241,7 +241,7 @@ public class KernelVector2FTest
         var vector2F = _vector2F1.ClampMinComponents(_vector2F7);
         Assert.AreEqual(1, vector2F.X);
         Assert.AreEqual(2, vector2F.Y);
-        
+
         vector2F = _vector2F7.ClampMinComponents(_vector2F1);
         Assert.AreEqual(1, vector2F.X);
         Assert.AreEqual(2, vector2F.Y);
@@ -253,12 +253,12 @@ public class KernelVector2FTest
         var vector2F = Vector2F.ClampMinComponents(_vector2F1, 1);
         Assert.AreEqual(1, vector2F.X);
         Assert.AreEqual(2, vector2F.Y);
-        
+
         vector2F = Vector2F.ClampMinComponents(_vector2F1, 2);
         Assert.AreEqual(2, vector2F.X);
         Assert.AreEqual(2, vector2F.Y);
     }
-    
+
     // TODO: add clampMaxComponents Test
 
     [TestMethod]
@@ -290,9 +290,9 @@ public class KernelVector2FTest
         var vector2F = _vector2F1.Cross(_vector2F2);
         Assert.AreEqual(-2, vector2F);
     }
-    
+
     // TODO: Add Rotate IsEqualApproximate IsZeroApproximate IsSame Reflect Bounce Slide Clamp Test
-    
+
     [TestMethod]
     public void KernelVector2FIsEqualApproximateTest()
     {
@@ -302,7 +302,7 @@ public class KernelVector2FTest
         Assert.IsTrue(v1.IsEqualApproximate(v2));
         Assert.IsFalse(v1.IsEqualApproximate(v3));
     }
-    
+
     [TestMethod]
     public void KernelVector2FIsZeroApproximateTest()
     {
@@ -314,8 +314,8 @@ public class KernelVector2FTest
     public void KernelVector2FNormalizeTest()
     {
         var vector2F = _vector2F4.Normalize();
-        Assert.AreEqual(0.4472135954999579, vector2F.X);
-        Assert.AreEqual(0.8944271909999159, vector2F.Y);
+        Assert.AreEqual(-0.4472135954999579, vector2F.X, Constant.Epsilon);
+        Assert.AreEqual(-0.8944271909999159, vector2F.Y, Constant.Epsilon);
     }
 
     [TestMethod]

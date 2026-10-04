@@ -16,6 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Kernel\Mathematics\Mathematics.csproj" />
       <ProjectReference Include="..\Kernel\MathLib\MathLib.csproj" />
     </ItemGroup>
 
