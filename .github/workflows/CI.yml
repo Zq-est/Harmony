@@ -28,7 +28,6 @@ jobs:
         uses: actions/setup-dotnet@v4.0.0
         with:
           dotnet-version: '9.0.x'
-          cache: true
 
       - name: Restore dependencies
         run: dotnet restore
